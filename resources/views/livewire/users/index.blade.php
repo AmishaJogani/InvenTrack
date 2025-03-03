@@ -17,7 +17,7 @@
         <table class="table table-bordered table-striped table-hover align-middle">
             <thead class="table-light">
                 <tr>
-                    <th>Sr No.</th>
+                    <th>#</th>
                     <th>Name</th>
                     <th>Role</th>
                     <th class="text-center">Actions</th>

@@ -63,6 +63,9 @@
         <!-- Template Main CSS File -->
         <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet" />
 
+        <!-- flux -->
+        @fluxAppearance
+
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js']) @livewireStyles
     </head>
@@ -377,6 +380,12 @@
                         <span>Users</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('categories.index') }}">
+                        <i class="bi bi-grid"></i>
+                        <span>Categories</span>
+                    </a>
+                </li>
                 <!-- End Dashboard Nav -->
 
                 <!-- End Blank Page Nav -->
@@ -448,5 +457,6 @@
         <!-- Template Main JS File -->
         <script src="{{ asset('assets/js/main.js') }}"></script>
         @livewireScripts
+        @fluxScripts
     </body>
 </html>

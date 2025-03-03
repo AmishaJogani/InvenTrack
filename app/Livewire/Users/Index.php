@@ -5,19 +5,17 @@ namespace App\Livewire\Users;
 use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin-layout')]
 class Index extends Component
 {
-    public $users, $userId, $name, $role, $email;
+    use WithPagination;
+    public $userId, $name, $role, $email;
 
-    public function mount()
-    {
-        $this->users = User::all();
-    }
     public function render()
     {
-        return view('livewire.users.index')->with('users', $this->users);
+        return view('livewire.users.index' , ['users' => User::paginate(5)]);
     }
 
     public function delete($id)
@@ -26,9 +24,7 @@ class Index extends Component
         $user->delete();
 
         session()->flash('message', 'User deleted successfully.');
-
-        $this->users = User::all(); // Refresh the list after delete
-        return view('livewire.users.index')->with('users', $this->users);
+      
     }
 
   

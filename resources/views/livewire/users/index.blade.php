@@ -17,16 +17,16 @@
         <table class="table table-bordered table-striped table-hover align-middle">
             <thead class="table-light">
                 <tr>
-                    <th>#</th>
+                    <th>Sr No.</th>
                     <th>Name</th>
                     <th>Role</th>
                     <th class="text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($users as $index => $user)
+                @foreach($users as $index => $user)
                     <tr>
-                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $users->firstItem() + $index }}</td>
                         <td>{{ $user->name }}</td>
                         <td>{{ ucfirst($user->role) }}</td>
                         <td class="text-center">
@@ -39,13 +39,11 @@
                         </td>
                         
                     </tr>
-                @empty
-                    <tr>
-                        <td colspan="4" class="text-center">No users found.</td>
-                    </tr>
-                @endforelse
+                @endforeach
             </tbody>
         </table>
+
+        {{ $users->links(data: ['scrollTo' => false]) }}
     </div>
 
 </div>

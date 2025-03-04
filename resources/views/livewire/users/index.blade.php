@@ -25,7 +25,7 @@
             </thead>
             <tbody>
                 @foreach($users as $index => $user)
-                    <tr>
+                    <tr wire:key="{{ $user->id }}">
                         <td>{{ $users->firstItem() + $index }}</td>
                         <td>{{ $user->name }}</td>
                         <td>{{ ucfirst($user->role) }}</td>

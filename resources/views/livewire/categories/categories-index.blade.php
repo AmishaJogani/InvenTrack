@@ -26,9 +26,9 @@
             </thead>
             <tbody>
                 @if($categories)
-                @foreach($categories as $category)
+                @foreach($categories as $Index => $category)
                     <tr wire:key="{{ $category->id }}">
-                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $categories->firstItem()+$Index }}</td>
                         <td>{{ $category->name }}</td>
                         <td>{{ $category->parent?->name ?? 'N/A' }}</td>
                         <td>
@@ -42,6 +42,6 @@
                 
             </tbody>
         </table>
-    
+        {{ $categories->links(data: ['scrollTo' => false]) }}
     </div>
 </div>

@@ -25,7 +25,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if($categories)
+                @if($categories->count() > 0)
                 @foreach($categories as $Index => $category)
                     <tr wire:key="{{ $category->id }}">
                         <td>{{ $categories->firstItem()+$Index }}</td>
@@ -38,6 +38,10 @@
                         </td>
                     </tr>
                 @endforeach
+                @else
+                <tr>
+                    <td colspan="4" class="text-center text-muted">No category found.</td>
+                </tr>
                 @endif
                 
             </tbody>

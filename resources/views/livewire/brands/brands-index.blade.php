@@ -24,7 +24,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if($brands)
+                @if($brands->count() > 0)
                 @foreach($brands as $Index => $brand)
                     <tr wire:key="{{ $brand->id }}">
                         <td>{{ $brands->firstItem()+$Index }}</td>
@@ -36,6 +36,10 @@
                         </td>
                     </tr>
                 @endforeach
+                @else
+                <tr>
+                    <td colspan="2" class="text-center text-muted">No Brand found.</td>
+                </tr>
                 @endif
                 
             </tbody>

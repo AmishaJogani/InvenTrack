@@ -398,6 +398,12 @@
                         <span>Products</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('supplier.index') }}">
+                        <i class="bi-person-lines-fill"></i> 
+                        <span>Suppliers</span>
+                    </a>
+                </li>
                 <!-- End Dashboard Nav -->
 
                 <!-- End Blank Page Nav -->

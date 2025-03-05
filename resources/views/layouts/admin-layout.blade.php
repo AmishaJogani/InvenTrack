@@ -376,7 +376,7 @@
             <ul class="sidebar-nav" id="sidebar-nav">
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('users.index') }}">
-                        <i class="bi bi-grid"></i>
+                        <i class="bi bi-people"></i>
                         <span>Users</span>
                     </a>
                 </li>
@@ -384,6 +384,18 @@
                     <a class="nav-link" href="{{ route('categories.index') }}">
                         <i class="bi bi-grid"></i>
                         <span>Categories</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('brands.index') }}">
+                        <i class="bi bi-tags"></i>	
+                        <span>Brands</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('product.index') }}">
+                        <i class="bi bi-box-seam"></i> 
+                        <span>Products</span>
                     </a>
                 </li>
                 <!-- End Dashboard Nav -->

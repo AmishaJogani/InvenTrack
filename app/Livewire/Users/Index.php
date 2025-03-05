@@ -11,7 +11,7 @@ use Livewire\WithPagination;
 class Index extends Component
 {
     use WithPagination;
-    public $userId, $name, $role, $email;
+    public $userId, $name, $role, $email, $profileImgPath;
 
     public function render()
     {

@@ -30,10 +30,10 @@
                         <td>{{ $user->name }}</td>
                         <td>{{ ucfirst($user->role) }}</td>
                         <td class="text-center">
-                            <a href="{{ route('profile')}}" class="btn btn-sm btn-outline-warning">
+                            <a href="{{ route('profile')}}" class="btn btn-sm btn-warning">
                                 Edit
                             </a>
-                            <button wire:click="delete({{ $user->id }})" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
+                            <button wire:click="delete({{ $user->id }})" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
                                 Delete
                             </button>
                         </td>

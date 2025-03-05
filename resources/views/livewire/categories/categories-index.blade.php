@@ -32,9 +32,9 @@
                         <td>{{ $category->name }}</td>
                         <td>{{ $category->parent?->name ?? 'N/A' }}</td>
                         <td>
-                            <a href="{{ route('category.edit', $category->id) }}" class="btn btn-sm btn-outline-warning">Edit</a>
+                            <a href="{{ route('category.edit', $category->id) }}" class="btn btn-sm btn-warning">Edit</a>
 
-                            <button class="btn btn-sm btn-outline-danger" wire:click="delete({{ $category->id }})" wire:confirm="Are you sure you want to delete this category?">Delete</button>
+                            <button class="btn btn-sm btn-danger" wire:click="delete({{ $category->id }})" wire:confirm="Are you sure you want to delete this category?">Delete</button>
                         </td>
                     </tr>
                 @endforeach

@@ -36,6 +36,7 @@ class CategoryEdit extends Component
         $category->update($validated);
 
         session()->flash('success', 'Category updated successfully!');
+        $this->reset(['name', 'parent_id']);
 
     }
 }

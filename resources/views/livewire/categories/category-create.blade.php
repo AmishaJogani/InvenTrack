@@ -20,7 +20,7 @@
             <form wire:submit="save">
                 <div class="mb-3">
                     <label for="name" class="form-label">Category Name</label>
-                    <input type="text" id="name" wire:model="name" class="form-control">
+                    <input id="name" wire:model="name" class="form-control">
                     @error('name') <small class="text-danger">{{ $message }}</small> @enderror
                 </div>
 
@@ -32,6 +32,7 @@
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                     </select>
+                    @error('parent_id') <small class="text-danger">{{ $message }}</small> @enderror
                 </div>
 
                 <div class="d-flex justify-content-end">

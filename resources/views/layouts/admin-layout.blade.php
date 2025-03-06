@@ -68,6 +68,7 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js']) @livewireStyles
+        @stack('styles')
     </head>
     <body class="font-sans antialiased">
         <header id="header" class="header fixed-top d-flex align-items-center">
@@ -89,21 +90,7 @@
             <!-- End Logo -->
 
             <div class="search-bar">
-                <form
-                    class="search-form d-flex align-items-center"
-                    method="POST"
-                    action="#"
-                >
-                    <input
-                        type="text"
-                        name="query"
-                        placeholder="Search"
-                        title="Enter search keyword"
-                    />
-                    <button type="submit" title="Search">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </form>
+                <livewire:search />
             </div>
             <!-- End Search Bar -->
 
@@ -404,6 +391,12 @@
                         <span>Suppliers</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('purchase.index') }}">
+                        <i class="bi bi-bag"></i>
+                        <span>Purchases</span>
+                    </a>
+                </li>
                 <!-- End Dashboard Nav -->
 
                 <!-- End Blank Page Nav -->
@@ -476,5 +469,6 @@
         <script src="{{ asset('assets/js/main.js') }}"></script>
         @livewireScripts
         @fluxScripts
+        @stack('scripts')
     </body>
 </html>

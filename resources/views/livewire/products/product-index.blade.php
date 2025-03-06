@@ -55,4 +55,31 @@
         </table>
         {{ $products->links(data: ['scrollTo' => false]) }}
     </div>
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const hash = window.location.hash;
+            if (hash.startsWith('#product-')) {
+                const targetRow = document.querySelector(hash);
+                if (targetRow) {
+                    targetRow.classList.add('highlight');
+                    // Optional: Remove highlight after few seconds
+                    setTimeout(() => targetRow.classList.remove('highlight'), 4000);
+                }
+            }
+        });
+    </script>
+    @endpush
+
+    @push('styles')
+    <style>
+        .product-row.highlight {
+        background-color: #fff3cd; /* Light yellow */
+        transition: background-color 0.5s ease;
+    }
+    
+    </style>
+    @endpush
+
 </div>
+

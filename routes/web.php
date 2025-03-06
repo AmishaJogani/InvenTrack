@@ -11,6 +11,9 @@ use App\Livewire\Categories\CategoryEdit;
 use App\Livewire\Products\ProductCreate;
 use App\Livewire\Products\ProductEdit;
 use App\Livewire\Products\ProductIndex;
+use App\Livewire\Purchases\PurchaseCreate;
+use App\Livewire\Purchases\PurchaseEdit;
+use App\Livewire\Purchases\PurchaseIndex;
 use App\Livewire\Suppliers\SupplierCreate;
 use App\Livewire\Suppliers\SupplierEdit;
 use App\Livewire\Suppliers\SupplierIndex;
@@ -51,6 +54,11 @@ Route::get('product/{id}edit', ProductEdit::class)->name('product.edit');
 Route::get('supplier/create', SupplierCreate::class)->name('supplier.create');
 Route::get('supplier/{id}/edit', SupplierEdit::class)->name('supplier.edit');
 Route::get('supplier/index', SupplierIndex::class)->name('supplier.index');
+
+// purchase Routes
+Route::get('purchase/index',PurchaseIndex::class)->name('purchase.index');
+Route::get('purchase/create',PurchaseCreate::class)->name('purchase.create');
+Route::put('purchase/{id}/edit',PurchaseEdit::class)->name('purchase.edit');
 
 
 

@@ -58,7 +58,7 @@ Route::get('supplier/index', SupplierIndex::class)->name('supplier.index');
 // purchase Routes
 Route::get('purchase/index',PurchaseIndex::class)->name('purchase.index');
 Route::get('purchase/create',PurchaseCreate::class)->name('purchase.create');
-Route::put('purchase/{id}/edit',PurchaseEdit::class)->name('purchase.edit');
+Route::get('purchase/{purchaseId}/edit',PurchaseEdit::class)->name('purchase.edit');
 
 
 

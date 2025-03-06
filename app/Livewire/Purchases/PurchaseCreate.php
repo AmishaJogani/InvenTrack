@@ -13,6 +13,8 @@ use Livewire\Component;
 class PurchaseCreate extends Component
 {
     public $supplier_id;
+    public $purchase_date;
+
     public $items = [
         ['product_id' => null, 'quantity' => 1, 'cost_price' => 0],
     ];
@@ -37,10 +39,21 @@ class PurchaseCreate extends Component
         $this->items = array_values($this->items); // Re-index array after removing
     }
 
+    public function resetForm()
+{
+    $this->supplier_id = null;
+    $this->purchase_date = null;
+    $this->items = [
+        ['product_id' => null, 'quantity' => 1, 'cost_price' => 0],
+    ];
+}
+
+
     public function save()
     {
         $validated = $this->validate([
             'supplier_id' => 'required|exists:suppliers,id',
+            'purchase_date' => 'required|date', 
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
@@ -51,7 +64,7 @@ class PurchaseCreate extends Component
             $purchase = Purchase::create([
                 'supplier_id' => $this->supplier_id,
                 'total_amount' => 0,
-                'purchase_date' => now()->toDateString(),
+                'purchase_date' => $this->purchase_date
             ]);
 
             $totalAmount = 0;
@@ -74,15 +87,14 @@ class PurchaseCreate extends Component
             $purchase->update(['total_amount' => $totalAmount]);
         });
 
-        session()->flash('success', 'Purchase saved successfully!');
-        $this->resetForm();
+        session()->flash('success', 'Purchase created successfully.');
+        $this->reset(['supplier_id', 'purchase_date']);
+        $this->items = [
+            ['product_id' => null, 'quantity' => 1, 'cost_price' => 0],
+        ];
     }
 
-    private function resetForm()
-    {
-        $this->supplier_id = null;
-        $this->items = [['product_id' => null, 'quantity' => 1, 'cost_price' => 0]];
-    }
+
 
     public function render()
     {

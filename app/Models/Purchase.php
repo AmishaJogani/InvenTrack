@@ -19,7 +19,7 @@ class Purchase extends Model
       }
   
       // Relationship with Purchase Items
-      public function purchaseItems()
+      public function items()
       {
           return $this->hasMany(PurchaseItem::class);
       }

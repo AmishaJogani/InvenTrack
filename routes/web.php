@@ -14,6 +14,7 @@ use App\Livewire\Products\ProductIndex;
 use App\Livewire\Purchases\PurchaseCreate;
 use App\Livewire\Purchases\PurchaseEdit;
 use App\Livewire\Purchases\PurchaseIndex;
+use App\Livewire\Sales\CreateBill;
 use App\Livewire\Suppliers\SupplierCreate;
 use App\Livewire\Suppliers\SupplierEdit;
 use App\Livewire\Suppliers\SupplierIndex;
@@ -59,6 +60,10 @@ Route::get('supplier/index', SupplierIndex::class)->name('supplier.index');
 Route::get('purchase/index',PurchaseIndex::class)->name('purchase.index');
 Route::get('purchase/create',PurchaseCreate::class)->name('purchase.create');
 Route::get('purchase/{purchaseId}/edit',PurchaseEdit::class)->name('purchase.edit');
+
+// sales routes
+Route::get('create-bill',CreateBill::class)->name('craete-bill');
+
 
 
 

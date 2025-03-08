@@ -398,8 +398,26 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('purchase.index') }}">
-                        <i class="bi bi-bag"></i>
+                        <i class="bi bi-cart-check"></i>
                         <span>Purchases</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('sales.index') }}">
+                        <i class="bi bi-receipt"></i>
+                        <span>Sales</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('sale.items') }}">
+                        <i class="bi bi-list-check"></i>
+                        <span>Sale-Items</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('customer.index') }}">
+                        <i class="bi bi-people"></i>
+                        <span>Customers</span>
                     </a>
                 </li>
                 <!-- End Dashboard Nav -->

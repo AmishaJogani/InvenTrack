@@ -8,6 +8,7 @@ use App\Livewire\Brands\BrandsIndex;
 use App\Livewire\Categories\CategoriesIndex;
 use App\Livewire\Categories\CategoryCreate;
 use App\Livewire\Categories\CategoryEdit;
+use App\Livewire\Customers\CustomerIndex;
 use App\Livewire\Products\ProductCreate;
 use App\Livewire\Products\ProductEdit;
 use App\Livewire\Products\ProductIndex;
@@ -15,6 +16,8 @@ use App\Livewire\Purchases\PurchaseCreate;
 use App\Livewire\Purchases\PurchaseEdit;
 use App\Livewire\Purchases\PurchaseIndex;
 use App\Livewire\Sales\CreateBill;
+use App\Livewire\Sales\SaleItems;
+use App\Livewire\Sales\Salesindex;
 use App\Livewire\Suppliers\SupplierCreate;
 use App\Livewire\Suppliers\SupplierEdit;
 use App\Livewire\Suppliers\SupplierIndex;
@@ -63,6 +66,11 @@ Route::get('purchase/{purchaseId}/edit',PurchaseEdit::class)->name('purchase.edi
 
 // sales routes
 Route::get('create-bill',CreateBill::class)->name('create-bill');
+Route::get('sales/index',Salesindex::class)->name('sales.index');
+Route::get('sale/items',SaleItems::class)->name('sale.items');
+
+// customer routes
+Route::get('customer/index',CustomerIndex::class)->name('customer.index');
 
 
 

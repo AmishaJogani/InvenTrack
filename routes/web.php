@@ -62,7 +62,7 @@ Route::get('purchase/create',PurchaseCreate::class)->name('purchase.create');
 Route::get('purchase/{purchaseId}/edit',PurchaseEdit::class)->name('purchase.edit');
 
 // sales routes
-Route::get('create-bill',CreateBill::class)->name('craete-bill');
+Route::get('create-bill',CreateBill::class)->name('create-bill');
 
 
 

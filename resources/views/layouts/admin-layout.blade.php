@@ -102,7 +102,12 @@
                         </a>
                     </li>
                     <!-- End Search Icon-->
-
+                    <li class="nav-item">
+                        <a href="{{ route('create-bill') }}" class="nav-link btn btn-light px-2 py-2 me-3 fw-semibold rounded-pill shadow-sm">
+                            <i class="bi bi-cart-plus me-2"></i> New Sale
+                        </a>
+                    </li>
+                    
                     <li class="nav-item dropdown">
                         <a
                             class="nav-link nav-icon"

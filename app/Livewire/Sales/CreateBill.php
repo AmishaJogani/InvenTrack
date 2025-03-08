@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -15,6 +16,7 @@ use Livewire\Component;
 class CreateBill extends Component
 {
     public $searchTerm;
+    public $selectedProduct;
     public $customer = [];
     public $cart = [];
     public $products = [];
@@ -29,25 +31,51 @@ class CreateBill extends Component
         $this->cart = [];  // Ensure cart is an array
     }
 
-    public function searchCustomer()
-    {
-        $this->customer = Customer::where('contact', $this->searchTerm)
-            ->orWhere('email', $this->searchTerm)
-            ->first()?->toArray() ?? [];
-
-        if (!$this->customer) {
-            session()->flash('info', 'Customer not found. Please fill the details.');
-            if (filter_var($this->searchTerm, FILTER_VALIDATE_EMAIL)) {
-                $this->customer['email'] = $this->searchTerm;
-            } else {
-                $this->customer['contact'] = $this->searchTerm;
-            }
-        }
+    public function enableNewCustomerForm()
+{
+    if (empty($this->searchTerm)) {
+        // Enable new customer entry
+        $this->customer = [
+            'name' => '',
+            'contact' => '',
+            'email' => '',
+        ];
+        session()->flash('info', 'Enter new customer details.');
     }
+}
+
+public function searchCustomer()
+{
+    if (empty($this->searchTerm)) {
+        $this->enableNewCustomerForm();
+        return;
+    }
+
+    // Search for existing customer
+    $customer = Customer::where('contact', $this->searchTerm)
+        ->orWhere('email', $this->searchTerm)
+        ->first();
+
+    if ($customer) {
+        $this->customer = $customer->toArray(); // Auto-fill details
+        session()->flash('success', 'Customer found!');
+    } else {
+        $this->customer = [];
+        session()->flash('info', 'Customer not found. Please enter details.');
+    }
+}
+
+    
 
     public function addToCart($productId)
     {
-        if (!$productId) return;
+        $this->validate([
+            'selectedProduct' => 'required|exists:products,id'
+        ], messages: [
+            'selectedProduct.required' => 'Please select a product.',
+            'selectedProduct.exists' => 'Invalid product selected.',
+        ]);
+
 
         $product = Product::find($productId);
 
@@ -97,17 +125,36 @@ class CreateBill extends Component
 
     public function processSale()
     {
+        // Ensure customer details are not empty
+        if (empty($this->customer['name']) || empty($this->customer['email'])) {
+            session()->flash('error', 'Please search for an existing customer or enter new customer details.');
+            return;
+        }
+
+        $customer = Customer::where('contact', $this->customer['contact'])
+            ->orWhere('email', $this->customer['email'])
+            ->first();
+
         $this->validate([
-            'customer.name' => 'required',
-            'customer.contact' => 'nullable|required|unique:customers,contact',
-            'customer.email' => 'email|unique:customers,email',
+            'customer.name' => 'required|string|max:255',
+            'customer.contact' => [
+                'nullable',
+                Rule::unique('customers', 'contact')->ignore($customer->id)
+            ],
+            'customer.email' => [
+                'required',
+                'email',
+                Rule::unique('customers', 'email')->ignore($customer->id)
+            ],
         ]);
+
+        if (count($this->cart) === 0) {
+            session()->flash('error', 'You must add at least one product before submitting.');
+            return;
+        }
 
         DB::beginTransaction();
         try {
-            $customer = Customer::where('contact', $this->customer['contact'])
-                ->orWhere('email', $this->customer['email'])
-                ->first();
 
             if (!$customer) {
                 $customer = Customer::create($this->customer);

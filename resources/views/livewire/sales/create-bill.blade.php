@@ -22,51 +22,66 @@
             @if(session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
-
             <form wire:submit.prevent="processSale">
                 <div class="mb-3">
                     <label class="form-label">Search by Contact or Email</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" wire:model="searchTerm">
+                        <input type="text" class="form-control" wire:model="searchTerm" wire:focus="enableNewCustomerForm">
                         <button type="button" class="btn btn-outline-primary" wire:click="searchCustomer">Search</button>
                     </div>
                 </div>
-
-                @if(session('info'))
-                    <div class="alert alert-info">{{ session('info') }}</div>
-                @endif
+                
 
                 @if($customer)
                     <h5 class="mt-4">Customer Details</h5>
                     <div class="row">
                         <div class="col-md-6">
                             <label>Name</label>
-                            <input class="form-control" wire:model="customer.name" @if(!empty($customer['id'])) disabled @endif>
+                            <input class="form-control" wire:model="customer.name" {{ isset($customer['id']) ? 'disabled' : '' }}>
+                            @error('customer.name')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                
                         </div>
                         <div class="col-md-6">
                             <label>Contact</label>
-                            <input class="form-control" wire:model="customer.contact" @if(!empty($customer['id'])) disabled @endif>
+                            <input class="form-control" wire:model="customer.contact" {{ isset($customer['id']) ? 'disabled' : '' }}>
+                            @error('customer.contact')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                
                         </div>
                         <div class="col-md-6 mt-3">
                             <label>Email</label>
-                            <input class="form-control" wire:model="customer.email" @if(!empty($customer['id'])) disabled @endif>
+                            <input class="form-control" wire:model="customer.email" {{ isset($customer['id']) ? 'disabled' : '' }}>
+                            @error('customer.email')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                
                         </div>
                         <div class="col-md-6 mt-3">
                             <label>Address</label>
-                            <textarea class="form-control" wire:model="customer.address" @if(!empty($customer['id'])) disabled @endif></textarea>
+                            <textarea class="form-control" wire:model="customer.address" {{ isset($customer['id']) ? 'disabled' : '' }}></textarea>
+                            @error('customer.address')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                
                         </div>
                     </div>
                 @endif
 
                 <h5 class="mt-4">Add Products</h5>
-                <select class="form-select" wire:change="addToCart($event.target.value)">
+                <select class="form-select" wire:model="selectedProduct" wire:change="addToCart($event.target.value)">
                     <option value="">Select Product</option>
                     @foreach($products as $product)
                         <option value="{{ $product->id }}">{{ $product->name }}</option>
                     @endforeach
                 </select>
-
-                @if(count($cart) > 0)
+                @error('selectedProduct')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
+            
+ @if(count($cart) > 0)
                     <table class="table mt-3">
                         <tr><th>Product</th><th>Qty</th><th>Price</th><th>Total</th><th>Action</th></tr>
                         @foreach($cart as $index => $item)

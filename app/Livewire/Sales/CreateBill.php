@@ -43,7 +43,6 @@ class CreateBill extends Component
         session()->flash('info', 'Enter new customer details.');
     }
 }
-
 public function searchCustomer()
 {
     if (empty($this->searchTerm)) {
@@ -51,7 +50,7 @@ public function searchCustomer()
         return;
     }
 
-    // Search for existing customer
+    // Search for an existing customer
     $customer = Customer::where('contact', $this->searchTerm)
         ->orWhere('email', $this->searchTerm)
         ->first();
@@ -60,12 +59,16 @@ public function searchCustomer()
         $this->customer = $customer->toArray(); // Auto-fill details
         session()->flash('success', 'Customer found!');
     } else {
-        $this->customer = [];
-        session()->flash('info', 'Customer not found. Please enter details.');
+        // If no customer is found, allow user to enter details
+        $this->customer = [
+            'name' => '',
+            'contact' => $this->searchTerm, // Prefill contact field
+            'email' => '',
+            'address' => ''
+        ];
+        session()->flash('success', 'Customer not found. Please enter details.');
     }
 }
-
-    
 
     public function addToCart($productId)
     {
@@ -139,12 +142,12 @@ public function searchCustomer()
             'customer.name' => 'required|string|max:255',
             'customer.contact' => [
                 'nullable',
-                Rule::unique('customers', 'contact')->ignore($customer->id)
+                Rule::unique('customers', 'contact')->ignore($customer?->id)
             ],
             'customer.email' => [
                 'required',
                 'email',
-                Rule::unique('customers', 'email')->ignore($customer->id)
+                Rule::unique('customers', 'email')->ignore($customer?->id)
             ],
         ]);
 

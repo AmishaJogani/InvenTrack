@@ -26,12 +26,11 @@
                 <div class="mb-3">
                     <label class="form-label">Search by Contact or Email</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" wire:model="searchTerm" wire:focus="enableNewCustomerForm">
+                        <input type="text" class="form-control" wire:model="searchTerm">
                         <button type="button" class="btn btn-outline-primary" wire:click="searchCustomer">Search</button>
                     </div>
                 </div>
                 
-
                 @if($customer)
                     <h5 class="mt-4">Customer Details</h5>
                     <div class="row">

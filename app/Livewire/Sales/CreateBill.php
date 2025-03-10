@@ -16,6 +16,8 @@ use Livewire\Component;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Log;
+
 
 #[Layout('layouts.admin-layout')]
 class CreateBill extends Component
@@ -153,10 +155,21 @@ class CreateBill extends Component
         $mpdf = new Mpdf();
         $mpdf->WriteHTML($html);
 
+        // Ensure directory exists
+        $invoiceDir = public_path('invoices');
+        if (!file_exists($invoiceDir)) {
+            mkdir($invoiceDir, 0775, true);
+        }
+
         // Save PDF to storage
         $pdfPath = public_path("invoices/invoice_{$saleId}.pdf");
         $mpdf->Output($pdfPath, 'F'); // Save as a file
-
+        
+        if (!file_exists($pdfPath)) {
+            Log::error("Invoice PDF not saved at $pdfPath");
+        } else {
+            Log::info("Invoice saved successfully at $pdfPath");
+        }
         // Send email with the PDF attached
         Mail::to($sale->customer->email)->send(new InvoiceMail($sale, $pdfPath));
     }
@@ -165,6 +178,8 @@ class CreateBill extends Component
     {
 
         $this->resetSale(); // Reset previous sale data before processing a new sale
+
+        Log::info('Starting processSale method');
 
         // Ensure customer details are not empty
         if (empty($this->customer['name']) || empty($this->customer['email'])) {
@@ -175,6 +190,9 @@ class CreateBill extends Component
         $customer = Customer::where('contact', $this->customer['contact'])
             ->orWhere('email', $this->customer['email'])
             ->first();
+
+        Log::info('Customer lookup completed', ['customer' => $customer]);
+
 
         $this->validate([
             'customer.name' => 'required|string|max:255',
@@ -199,9 +217,11 @@ class CreateBill extends Component
 
             if (!$customer) {
                 $customer = Customer::create($this->customer);
+                Log::info('New customer created', ['customer_id' => $customer->id]);
             } else {
                 // Update existing customer details if needed
                 $customer->update($this->customer);
+                Log::info('Existing customer updated', ['customer_id' => $customer->id]);
             }
 
             $sale = Sale::create([
@@ -209,6 +229,7 @@ class CreateBill extends Component
                 'total_amount' => $this->total_amount,
                 'payment_method' => $this->payment_method,
             ]);
+            Log::info('Sale created', ['sale_id' => $sale->id]);
 
             foreach ($this->cart as $item) {
                 SaleItem::create([
@@ -217,6 +238,8 @@ class CreateBill extends Component
                     'quantity' => $item['quantity'],
                     'selling_price' => $item['price'],
                 ]);
+
+                Log::info('Sale item added', ['product_id' => $item['id'], 'quantity' => $item['quantity']]);
                 Product::where('id', $item['id'])->decrement('unit', $item['quantity']);
             }
 
@@ -225,19 +248,24 @@ class CreateBill extends Component
                 'payment_method' => $this->payment_method,
                 'amount_paid' => $this->total_amount,
             ]);
+            Log::info('Payment recorded', ['sale_id' => $sale->id, 'amount' => $this->total_amount]);
             // **Set saleCompleted to true and store saleId**
             $this->saleCompleted = true;
             $this->saleId = $sale->id;
 
             // **Generate Invoice and Send Email**
             $this->generateInvoice($sale->id);
+            Log::info('Invoice generated and email sent');
 
             DB::commit();
+            Log::info('Transaction committed successfully');
 
-            $this->reset(['searchTerm', 'customer', 'cart', 'total_amount', 'payment_method']);
+            $this->reset(['searchTerm', 'customer', 'cart', 'total_amount', 'payment_method', 'selectedProduct']);
             session()->flash('success', 'invoice sent to registered Email successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
+            log::error('Sale processing failed: ' . $e->getMessage());
+            session()->flash('error', 'Sale failed: ' . $e->getMessage());
             session()->flash('error', 'Sale failed: ' . $e->getMessage());
         }
     }

@@ -86,7 +86,7 @@
                         @foreach($cart as $index => $item)
                             <tr>
                                 <td>{{ $item['name'] }}</td>
-                                <td><input type="number" class="form-control" wire:model.defer="cart.{{ $index }}.quantity" wire:blur="updateQuantity({{ $index }})"></td>
+                                <td><input type="number" class="form-control" wire:model.defer="cart.{{ $index }}.quantity" wire:blur="updateQuantity({{ $index }})"  @keydown.enter.prevent></td>
                                 <td>₹{{ $item['price'] }}</td>
                                 <td>₹{{ $item['total'] }}</td>
                                 <td><button type="button" wire:click="removeFromCart({{ $index }})" class="btn btn-danger">Remove</button></td>
@@ -100,10 +100,5 @@
                 <button type="submit" class="btn btn-success mt-3">Submit Sale</button>
             </form>
         </div>
-
-        @if($saleCompleted)
-    <a href="{{ route('download.invoice', $saleId) }}" class="btn btn-primary mt-3">Download Invoice</a>
-@endif
-
     </div>
 </div>

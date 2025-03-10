@@ -33,6 +33,7 @@ class CreateBill extends Component
     public $saleId;
 
 
+
     public function mount()
     {
         $this->products = Product::all();
@@ -55,7 +56,7 @@ class CreateBill extends Component
                 'contact' => '',
                 'email' => '',
             ];
-            session()->flash('info', 'Enter new customer details.');
+            session()->flash('success', 'Enter new customer details.');
         }
     }
     public function searchCustomer()
@@ -140,6 +141,25 @@ class CreateBill extends Component
     {
         $this->total_amount = collect($this->cart)->sum('total');
     }
+    // for invoicepdf generation and send email
+    public function generateInvoice($saleId)
+    {
+        $sale = Sale::with('customer', 'saleItems.product')->findOrFail($saleId);
+
+        // Generate the invoice HTML
+        $html = view('livewire.sales.invoice', compact('sale'))->render();
+
+        // Generate PDF
+        $mpdf = new Mpdf();
+        $mpdf->WriteHTML($html);
+
+        // Save PDF to storage
+        $pdfPath = public_path("invoices/invoice_{$saleId}.pdf");
+        $mpdf->Output($pdfPath, 'F'); // Save as a file
+
+        // Send email with the PDF attached
+        Mail::to($sale->customer->email)->send(new InvoiceMail($sale, $pdfPath));
+    }
 
     public function processSale()
     {
@@ -205,46 +225,22 @@ class CreateBill extends Component
                 'payment_method' => $this->payment_method,
                 'amount_paid' => $this->total_amount,
             ]);
-            // pdf logic here
-            DB::commit();
-
             // **Set saleCompleted to true and store saleId**
             $this->saleCompleted = true;
             $this->saleId = $sale->id;
 
+            // **Generate Invoice and Send Email**
+            $this->generateInvoice($sale->id);
+
+            DB::commit();
+
             $this->reset(['searchTerm', 'customer', 'cart', 'total_amount', 'payment_method']);
-            session()->flash('success', 'Sale completed successfully!');
+            session()->flash('success', 'invoice sent to registered Email successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Sale failed: ' . $e->getMessage());
         }
     }
-
-    // for pdf generation
-    public function generateInvoice($saleId)
-    {
-        $sale = Sale::with('customer', 'saleItems.product')->findOrFail($saleId);
-    
-        // Generate the invoice HTML
-        $html = view('livewire.sales.invoice', compact('sale'))->render();
-    
-        // Generate PDF
-        $mpdf = new Mpdf();
-        $mpdf->WriteHTML($html);
-    
-        // Save PDF to storage
-        $pdfPath = storage_path("app/invoices/invoice_{$saleId}.pdf");
-        $mpdf->Output($pdfPath, 'F'); // Save as a file
-    
-        // Send email with the PDF attached
-        Mail::to($sale->customer->email)->send(new InvoiceMail($sale, $pdfPath));
-    
-        // Optionally return a download response
-        return response()->download($pdfPath);
-    }
-    
-
-
     public function render()
     {
         return view('livewire.sales.create-bill');

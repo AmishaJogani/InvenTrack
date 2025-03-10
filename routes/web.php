@@ -68,6 +68,7 @@ Route::get('purchase/{purchaseId}/edit',PurchaseEdit::class)->name('purchase.edi
 Route::get('create-bill',CreateBill::class)->name('create-bill');
 Route::get('sales/index',Salesindex::class)->name('sales.index');
 Route::get('sale/items',SaleItems::class)->name('sale.items');
+Route::get('/download-invoice/{saleId}', [CreateBill::class, 'generateInvoice'])->name('download.invoice');
 
 // customer routes
 Route::get('customer/index',CustomerIndex::class)->name('customer.index');

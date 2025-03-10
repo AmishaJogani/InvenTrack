@@ -72,21 +72,27 @@
     </head>
     <body class="font-sans antialiased">
         <header id="header" class="header fixed-top d-flex align-items-center">
-            <a href="{{ route('dashboard') }}" style="text-decoration: none;">
+            <a href="{{ route('dashboard') }}" style="text-decoration: none">
                 <div class="flex items-center space-x-3">
-                    <img src="{{ asset('assets/img/InvenTrack-logo.png') }}" alt="InvenTrack Logo" style="width: 45px; height: 45px; object-fit: contain;">
-                    <span style="
-                        font-size: 30px; /* Adjust font size */
-                        font-weight: 500;
-                        letter-spacing: 2px;
-                        color: #111827; /* Dark gray (similar to Tailwind's gray-900) */
-                        font-family: Arial, sans-serif; /* Or any font you want */
-                    ">
-                        Inven<span style="color: #4b5563;">Track</span>
+                    <img
+                        src="{{ asset('assets/img/InvenTrack-logo.png') }}"
+                        alt="InvenTrack Logo"
+                        style="width: 45px; height: 45px; object-fit: contain"
+                    />
+                    <span
+                        style="
+                            font-size: 30px; /* Adjust font size */
+                            font-weight: 500;
+                            letter-spacing: 2px;
+                            color: #111827; /* Dark gray (similar to Tailwind's gray-900) */
+                            font-family: Arial, sans-serif; /* Or any font you want */
+                        "
+                    >
+                        Inven<span style="color: #4b5563">Track</span>
                     </span>
                 </div>
             </a>
-            
+
             <!-- End Logo -->
 
             <div class="search-bar">
@@ -103,12 +109,15 @@
                     </li>
                     <!-- End Search Icon-->
                     <li class="nav-item">
-                        <a href="{{ route('create-bill') }}" class="nav-link btn btn-light px-2 py-2 me-3 fw-semibold rounded-pill shadow-sm">
+                        <a
+                            href="{{ route('create-bill') }}"
+                            class="nav-link btn btn-light px-2 py-2 me-3 fw-semibold rounded-pill shadow-sm"
+                        >
                             <i class="bi bi-cart-plus me-2"></i> New Sale
                         </a>
                     </li>
-                    
-                    <li class="nav-item dropdown">
+
+                    <li class="nav-item dropdown" wire:ignore>
                         <a
                             class="nav-link nav-icon"
                             href="#"
@@ -312,7 +321,12 @@
                                 src="{{ asset('storage/profile_images/' . auth()->user()->profile_img) }}"
                                 alt="Profile"
                                 class="rounded-circle"
-                                style="width: 40px; height: 45px; object-fit: cover; border: 2px solid #fff;" 
+                                style="
+                                    width: 40px;
+                                    height: 45px;
+                                    object-fit: cover;
+                                    border: 2px solid #fff;
+                                "
                             />
                             <span
                                 class="d-none d-md-block dropdown-toggle ps-2"
@@ -344,15 +358,21 @@
                                 <hr class="dropdown-divider" />
                             </li>
                             <li>
-                                <form method="POST" action="{{ route('logout') }}" class="d-flex align-items-center m-0 p-0">
+                                <form
+                                    method="POST"
+                                    action="{{ route('logout') }}"
+                                    class="d-flex align-items-center m-0 p-0"
+                                >
                                     @csrf
-                                    <button type="submit" class="dropdown-item d-flex align-items-center">
+                                    <button
+                                        type="submit"
+                                        class="dropdown-item d-flex align-items-center"
+                                    >
                                         <i class="bi bi-box-arrow-right"></i>
                                         <span>Sign Out</span>
                                     </button>
                                 </form>
                             </li>
-                            
                         </ul>
                         <!-- End Profile Dropdown Items -->
                     </li>
@@ -380,19 +400,19 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('brands.index') }}">
-                        <i class="bi bi-tags"></i>	
+                        <i class="bi bi-tags"></i>
                         <span>Brands</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('product.index') }}">
-                        <i class="bi bi-box-seam"></i> 
+                        <i class="bi bi-box-seam"></i>
                         <span>Products</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('supplier.index') }}">
-                        <i class="bi-person-lines-fill"></i> 
+                        <i class="bi-person-lines-fill"></i>
                         <span>Suppliers</span>
                     </a>
                 </li>
@@ -490,8 +510,31 @@
 
         <!-- Template Main JS File -->
         <script src="{{ asset('assets/js/main.js') }}"></script>
-        @livewireScripts
-        @fluxScripts
-        @stack('scripts')
+        @livewireScripts @fluxScripts @stack('scripts')
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                Livewire.hook("message.processed", (message, component) => {
+                    // Reinitialize Bootstrap components
+                    var dropdowns =
+                        document.querySelectorAll(".dropdown-toggle");
+                    dropdowns.forEach((dropdown) => {
+                        new bootstrap.Dropdown(dropdown);
+                    });
+
+                    // Reinitialize other third-party scripts
+                    if (typeof $ !== "undefined") {
+                        $(".tooltip").tooltip(); // Example: Bootstrap tooltip
+                        $(".modal").modal(); // Example: Bootstrap modal
+                    }
+                });
+            });
+        </script>
+        @push('scripts')
+        <script>
+            $(document).ready(function () {
+                console.log("Reinitializing scripts for this component");
+            });
+        </script>
+        @endpush
     </body>
 </html>

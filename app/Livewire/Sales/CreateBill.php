@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Mpdf\Mpdf;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 
 #[Layout('layouts.admin-layout')]
 class CreateBill extends Component
@@ -24,6 +27,9 @@ class CreateBill extends Component
     public $split_payments = [];
     public $total_amount = 0;
     public $invoice_url = null;
+    public $saleCompleted = false;
+    public $saleId;
+
 
     public function mount()
     {
@@ -31,44 +37,51 @@ class CreateBill extends Component
         $this->cart = [];  // Ensure cart is an array
     }
 
+    public function resetSale()
+    {
+        $this->saleCompleted = false;
+        $this->saleId = null;
+    }
+
+
     public function enableNewCustomerForm()
-{
-    if (empty($this->searchTerm)) {
-        // Enable new customer entry
-        $this->customer = [
-            'name' => '',
-            'contact' => '',
-            'email' => '',
-        ];
-        session()->flash('info', 'Enter new customer details.');
+    {
+        if (empty($this->searchTerm)) {
+            // Enable new customer entry
+            $this->customer = [
+                'name' => '',
+                'contact' => '',
+                'email' => '',
+            ];
+            session()->flash('info', 'Enter new customer details.');
+        }
     }
-}
-public function searchCustomer()
-{
-    if (empty($this->searchTerm)) {
-        $this->enableNewCustomerForm();
-        return;
-    }
+    public function searchCustomer()
+    {
+        if (empty($this->searchTerm)) {
+            $this->enableNewCustomerForm();
+            return;
+        }
 
-    // Search for an existing customer
-    $customer = Customer::where('contact', $this->searchTerm)
-        ->orWhere('email', $this->searchTerm)
-        ->first();
+        // Search for an existing customer
+        $customer = Customer::where('contact', $this->searchTerm)
+            ->orWhere('email', $this->searchTerm)
+            ->first();
 
-    if ($customer) {
-        $this->customer = $customer->toArray(); // Auto-fill details
-        session()->flash('success', 'Customer found!');
-    } else {
-        // If no customer is found, allow user to enter details
-        $this->customer = [
-            'name' => '',
-            'contact' => $this->searchTerm, // Prefill contact field
-            'email' => '',
-            'address' => ''
-        ];
-        session()->flash('success', 'Customer not found. Please enter details.');
+        if ($customer) {
+            $this->customer = $customer->toArray(); // Auto-fill details
+            session()->flash('success', 'Customer found!');
+        } else {
+            // If no customer is found, allow user to enter details
+            $this->customer = [
+                'name' => '',
+                'contact' => $this->searchTerm, // Prefill contact field
+                'email' => '',
+                'address' => ''
+            ];
+            session()->flash('success', 'Customer not found. Please enter details.');
+        }
     }
-}
 
     public function addToCart($productId)
     {
@@ -128,6 +141,9 @@ public function searchCustomer()
 
     public function processSale()
     {
+
+        $this->resetSale(); // Reset previous sale data before processing a new sale
+
         // Ensure customer details are not empty
         if (empty($this->customer['name']) || empty($this->customer['email'])) {
             session()->flash('error', 'Please search for an existing customer or enter new customer details.');
@@ -190,6 +206,10 @@ public function searchCustomer()
             // pdf logic here
             DB::commit();
 
+            // **Set saleCompleted to true and store saleId**
+            $this->saleCompleted = true;
+            $this->saleId = $sale->id;
+
             $this->reset(['searchTerm', 'customer', 'cart', 'total_amount', 'payment_method']);
             session()->flash('success', 'Sale completed successfully!');
         } catch (\Exception $e) {
@@ -197,6 +217,23 @@ public function searchCustomer()
             session()->flash('error', 'Sale failed: ' . $e->getMessage());
         }
     }
+
+    // for pdf generation
+    public function generateInvoice($saleId)
+    {
+        $sale = Sale::with('customer', 'saleItems.product')->findOrFail($saleId);
+
+        $html = view('livewire.sales.invoice', compact('sale'))->render();
+
+        $mpdf = new Mpdf();
+        $mpdf->WriteHTML($html);
+        $fileName = 'invoice_' . $saleId . '.pdf';
+
+        return response()->streamDownload(function () use ($mpdf) {
+            echo $mpdf->Output('', 'S');
+        }, $fileName);
+    }
+
 
     public function render()
     {

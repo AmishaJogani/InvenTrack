@@ -100,5 +100,10 @@
                 <button type="submit" class="btn btn-success mt-3">Submit Sale</button>
             </form>
         </div>
+
+        @if($saleCompleted)
+    <a href="{{ route('download.invoice', $saleId) }}" class="btn btn-primary mt-3">Download Invoice</a>
+@endif
+
     </div>
 </div>

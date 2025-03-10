@@ -2,12 +2,14 @@
 
 namespace App\Livewire\Sales;
 
+use App\Mail\InvoiceMail;
 use App\Models\Customer;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -222,17 +224,25 @@ class CreateBill extends Component
     public function generateInvoice($saleId)
     {
         $sale = Sale::with('customer', 'saleItems.product')->findOrFail($saleId);
-
+    
+        // Generate the invoice HTML
         $html = view('livewire.sales.invoice', compact('sale'))->render();
-
+    
+        // Generate PDF
         $mpdf = new Mpdf();
         $mpdf->WriteHTML($html);
-        $fileName = 'invoice_' . $saleId . '.pdf';
-
-        return response()->streamDownload(function () use ($mpdf) {
-            echo $mpdf->Output('', 'S');
-        }, $fileName);
+    
+        // Save PDF to storage
+        $pdfPath = storage_path("app/invoices/invoice_{$saleId}.pdf");
+        $mpdf->Output($pdfPath, 'F'); // Save as a file
+    
+        // Send email with the PDF attached
+        Mail::to($sale->customer->email)->send(new InvoiceMail($sale, $pdfPath));
+    
+        // Optionally return a download response
+        return response()->download($pdfPath);
     }
+    
 
 
     public function render()

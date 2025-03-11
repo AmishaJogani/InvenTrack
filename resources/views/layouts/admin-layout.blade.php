@@ -116,27 +116,8 @@
                             <i class="bi bi-cart-plus me-2"></i> New Sale
                         </a>
                     </li>
-
-                    <li class="nav-item dropdown" wire:ignore>
-                        <a
-                            class="nav-link nav-icon"
-                            href="#"
-                            data-bs-toggle="dropdown"
-                        >
-                            <i class="bi bi-bell"></i>
-                            <span class="badge bg-primary badge-number"
-                                >4</span
-                            > </a
-                        ><!-- End Notification Icon -->
-
-                        <ul
-                            class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications"
-                        >
-                            <livewire:notifications />
-                        </ul>
-                        <!-- End Notification Dropdown Items -->
-                    </li>
-                    <!-- End Notification Nav -->
+                    <!-- notifications -->
+                    <livewire:notifications />
 
                     <li class="nav-item dropdown">
                         <a

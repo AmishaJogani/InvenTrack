@@ -21,7 +21,7 @@
                 <tr wire:key="{{ $saleitem->id }}">
                     <td>{{ $saleitems->firstItem()+$Index }}</td>
                     <td>{{ $saleitem-> sale_id}}</td>
-                    <td>{{ $saleitem->product->name }}</td>
+                    <td>{{ $saleitem->product?->name ?? 'N/A' }}</td>
                     <td>{{ $saleitem->quantity }}</td>
                     <td>{{ $saleitem->selling_price }}</td>
                 </tr>

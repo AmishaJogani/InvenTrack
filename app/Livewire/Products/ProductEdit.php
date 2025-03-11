@@ -5,9 +5,13 @@ namespace App\Livewire\Products;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\User;
+use App\Notifications\LowStockAlert;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\Livewire;
 
 #[Layout('layouts.admin-layout')]
 class ProductEdit extends Component
@@ -53,7 +57,15 @@ class ProductEdit extends Component
         $product = Product::findOrFail($this->id);
         $product->update($validated);
 
-
+           // Check for low stock and notify admin
+           if ($product->unit <= $product->low_stock_alert) {
+            $admin = User::where('role', 'admin')->first();
+            if ($admin) {
+                Log::info("Sending Low Stock Alert for: " . $product->name);
+                $admin->notify(new LowStockAlert($product));
+                $this->dispatch('stockUpdated');
+            }
+        }
 
         session()->flash('success', 'Product updated successfully!');
         $this->reset(['category_id','brand_id','name','price','description','unit','low_stock_alert']);

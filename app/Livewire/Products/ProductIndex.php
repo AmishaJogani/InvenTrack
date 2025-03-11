@@ -10,7 +10,7 @@ use Livewire\WithPagination;
 class ProductIndex extends Component
 {
     use WithPagination;
-
+    protected $listeners = ['refreshProductList' => 'render'];
     public function render()
     {
         return view('livewire.products.product-index',['products'=>Product::paginate(5)]);

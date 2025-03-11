@@ -22,7 +22,7 @@
 
                 <p class="mt-3">For any queries, feel free to contact us.</p>
 
-                <p class="text-muted">Regards, <br><strong>Your Business Name</strong></p>
+                <p class="text-muted">Regards, <br><strong>InvanTrack</strong></p>
             </div>
         </div>
     </div>

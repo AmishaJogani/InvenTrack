@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Sales;
 
+use App\Jobs\SendInvoiceJob;
 use App\Mail\InvoiceMail;
 use App\Models\Customer;
 use App\Models\Payment;
@@ -156,22 +157,22 @@ class CreateBill extends Component
         $mpdf->WriteHTML($html);
 
         // Ensure directory exists
-        $invoiceDir = public_path('invoices');
+        $invoiceDir = Storage_path('app/public/invoices');
         if (!file_exists($invoiceDir)) {
             mkdir($invoiceDir, 0775, true);
         }
 
         // Save PDF to storage
-        $pdfPath = public_path("invoices/invoice_{$saleId}.pdf");
+        $pdfPath = Storage_path("app/public/invoices/invoice_{$saleId}.pdf");
         $mpdf->Output($pdfPath, 'F'); // Save as a file
-        
+
         if (!file_exists($pdfPath)) {
             Log::error("Invoice PDF not saved at $pdfPath");
         } else {
             Log::info("Invoice saved successfully at $pdfPath");
         }
-        // Send email with the PDF attached
-        Mail::to($sale->customer->email)->send(new InvoiceMail($sale, $pdfPath));
+        // Dispatch the job to send the email asynchronously
+        SendInvoiceJob::dispatch($sale, $pdfPath);
     }
 
     public function processSale()
@@ -179,7 +180,7 @@ class CreateBill extends Component
 
         $this->resetSale(); // Reset previous sale data before processing a new sale
 
-        Log::info('Starting processSale method');
+        // Log::info('Starting processSale method');
 
         // Ensure customer details are not empty
         if (empty($this->customer['name']) || empty($this->customer['email'])) {
@@ -191,7 +192,7 @@ class CreateBill extends Component
             ->orWhere('email', $this->customer['email'])
             ->first();
 
-        Log::info('Customer lookup completed', ['customer' => $customer]);
+        // Log::info('Customer lookup completed', ['customer' => $customer]);
 
 
         $this->validate([
@@ -217,11 +218,11 @@ class CreateBill extends Component
 
             if (!$customer) {
                 $customer = Customer::create($this->customer);
-                Log::info('New customer created', ['customer_id' => $customer->id]);
+                // Log::info('New customer created', ['customer_id' => $customer->id]);
             } else {
                 // Update existing customer details if needed
                 $customer->update($this->customer);
-                Log::info('Existing customer updated', ['customer_id' => $customer->id]);
+                // Log::info('Existing customer updated', ['customer_id' => $customer->id]);
             }
 
             $sale = Sale::create([
@@ -229,7 +230,7 @@ class CreateBill extends Component
                 'total_amount' => $this->total_amount,
                 'payment_method' => $this->payment_method,
             ]);
-            Log::info('Sale created', ['sale_id' => $sale->id]);
+            // Log::info('Sale created', ['sale_id' => $sale->id]);
 
             foreach ($this->cart as $item) {
                 SaleItem::create([
@@ -239,7 +240,7 @@ class CreateBill extends Component
                     'selling_price' => $item['price'],
                 ]);
 
-                Log::info('Sale item added', ['product_id' => $item['id'], 'quantity' => $item['quantity']]);
+                // Log::info('Sale item added', ['product_id' => $item['id'], 'quantity' => $item['quantity']]);
                 Product::where('id', $item['id'])->decrement('unit', $item['quantity']);
             }
 
@@ -248,23 +249,23 @@ class CreateBill extends Component
                 'payment_method' => $this->payment_method,
                 'amount_paid' => $this->total_amount,
             ]);
-            Log::info('Payment recorded', ['sale_id' => $sale->id, 'amount' => $this->total_amount]);
+            // Log::info('Payment recorded', ['sale_id' => $sale->id, 'amount' => $this->total_amount]);
             // **Set saleCompleted to true and store saleId**
             $this->saleCompleted = true;
             $this->saleId = $sale->id;
 
             // **Generate Invoice and Send Email**
             $this->generateInvoice($sale->id);
-            Log::info('Invoice generated and email sent');
+            // Log::info('Invoice generated and email sent');
 
             DB::commit();
-            Log::info('Transaction committed successfully');
+            // Log::info('Transaction committed successfully');
 
             $this->reset(['searchTerm', 'customer', 'cart', 'total_amount', 'payment_method', 'selectedProduct']);
-            session()->flash('success', 'invoice sent to registered Email successfully!');
+            session()->flash('success', 'Sale completed,invoice sent to registered Email successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
-            log::error('Sale processing failed: ' . $e->getMessage());
+            // log::error('Sale processing failed: ' . $e->getMessage());
             session()->flash('error', 'Sale failed: ' . $e->getMessage());
             session()->flash('error', 'Sale failed: ' . $e->getMessage());
         }

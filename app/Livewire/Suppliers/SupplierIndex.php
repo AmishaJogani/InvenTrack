@@ -12,7 +12,7 @@ class SupplierIndex extends Component
     use WithPagination;
     public function render()
     {
-        return view('livewire.suppliers.supplier-index',['suppliers'=>Supplier::paginate(5)]);
+        return view('livewire.suppliers.supplier-index',['suppliers'=>Supplier::paginate(10)]);
     }
 
     public function delete($id){

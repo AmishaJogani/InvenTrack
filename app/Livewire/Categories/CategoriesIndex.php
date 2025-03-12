@@ -12,7 +12,7 @@ class CategoriesIndex extends Component
     use WithPagination;
     public function render()
     {
-        return view('livewire.categories.categories-index' , ['categories' => Category::paginate(5)]);
+        return view('livewire.categories.categories-index' , ['categories' => Category::paginate(10)]);
     }
 
     public function delete($id){

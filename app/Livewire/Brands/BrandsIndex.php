@@ -12,7 +12,7 @@ class BrandsIndex extends Component
 use WithPagination;
     public function render()
     {
-        return view('livewire.brands.brands-index',['brands' => Brand::paginate(5)]);
+        return view('livewire.brands.brands-index',['brands' => Brand::paginate(10)]);
     }
 
     public function delete($id){

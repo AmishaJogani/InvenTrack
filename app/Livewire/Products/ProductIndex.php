@@ -13,7 +13,7 @@ class ProductIndex extends Component
     protected $listeners = ['refreshProductList' => 'render'];
     public function render()
     {
-        return view('livewire.products.product-index',['products'=>Product::paginate(5)]);
+        return view('livewire.products.product-index',['products'=>Product::paginate(10)]);
     }
 
     public function delete($id){

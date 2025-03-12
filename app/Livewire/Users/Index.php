@@ -15,7 +15,7 @@ class Index extends Component
 
     public function render()
     {
-        return view('livewire.users.index' , ['users' => User::paginate(5)]);
+        return view('livewire.users.index' , ['users' => User::paginate(10)]);
     }
 
     public function delete($id)

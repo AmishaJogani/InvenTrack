@@ -12,6 +12,6 @@ class PurchaseIndex extends Component
     use WithPagination;
     public function render()
     {
-        return view('livewire.purchases.purchase-index',['purchases'=>Purchase::paginate(5)]);
+        return view('livewire.purchases.purchase-index',['purchases'=>Purchase::paginate(10)]);
     }
 }

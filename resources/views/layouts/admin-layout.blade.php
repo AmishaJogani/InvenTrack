@@ -94,10 +94,10 @@
             </a>
 
             <!-- End Logo -->
-
+<!-- 
             <div class="search-bar">
                 <livewire:search />
-            </div>
+            </div> -->
             <!-- End Search Bar -->
 
             <nav class="header-nav ms-auto">
@@ -108,7 +108,7 @@
                         </a>
                     </li>
                     <!-- End Search Icon-->
-                    
+
                     <!-- notifications -->
                     <livewire:notifications />
                     <li class="nav-item">

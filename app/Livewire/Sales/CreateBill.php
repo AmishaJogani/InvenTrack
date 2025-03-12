@@ -9,6 +9,8 @@ use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleItem;
+use App\Models\User;
+use App\Notifications\LowStockAlert;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
@@ -174,7 +176,6 @@ class CreateBill extends Component
         // Dispatch the job to send the email asynchronously
         SendInvoiceJob::dispatch($sale, $pdfPath);
     }
-
     public function processSale()
     {
 
@@ -233,15 +234,37 @@ class CreateBill extends Component
             // Log::info('Sale created', ['sale_id' => $sale->id]);
 
             foreach ($this->cart as $item) {
-                SaleItem::create([
-                    'sale_id' => $sale->id,
-                    'product_id' => $item['id'],
-                    'quantity' => $item['quantity'],
-                    'selling_price' => $item['price'],
-                ]);
+                $product = Product::find($item['id']);
 
-                // Log::info('Sale item added', ['product_id' => $item['id'], 'quantity' => $item['quantity']]);
-                Product::where('id', $item['id'])->decrement('unit', $item['quantity']);
+                if ($product) {
+                    // Check if the product has enough stock before processing the sale
+                    if ($product->unit < $item['quantity']) {
+                        session()->flash('error', "Insufficient stock for product: {$product->name}");
+                        DB::rollBack();
+                        return;
+                    }
+
+                    // **Decrease stock**
+                    $product->decrement('unit', $item['quantity']);
+
+                    // **Check for low stock and notify admin**
+                    if ($product->unit <= $product->low_stock_alert) {
+                        $admin = User::where('role', 'admin')->first();
+                        if ($admin) {
+                            Log::info("Sending Low Stock Alert for: " . $product->name);
+                            $admin->notify(new LowStockAlert($product));
+                            $this->dispatch('stockUpdated');
+                        }
+                    }
+
+                    // Add sale item record
+                    SaleItem::create([
+                        'sale_id' => $sale->id,
+                        'product_id' => $item['id'],
+                        'quantity' => $item['quantity'],
+                        'selling_price' => $item['price'],
+                    ]);
+                }
             }
 
             Payment::create([

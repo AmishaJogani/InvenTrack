@@ -5,6 +5,10 @@
 </x-slot>
 
 <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+        <input class="form-control w-25" placeholder="Search Customer..." wire:model.live="search">
+    </div>
+
 
     <div class="table-responsive">
         <table class="table table-bordered table-striped align-middle">

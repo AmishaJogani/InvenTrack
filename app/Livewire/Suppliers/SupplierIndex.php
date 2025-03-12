@@ -10,9 +10,15 @@ use Livewire\WithPagination;
 class SupplierIndex extends Component
 {
     use WithPagination;
+    public $search = ''; // Search query
+    protected $queryString = ['search']; // Keeps search term in the URL
     public function render()
     {
-        return view('livewire.suppliers.supplier-index',['suppliers'=>Supplier::paginate(10)]);
+        $suppliers = Supplier::where('name', 'like', '%' . $this->search . '%')
+            ->orWhere('email', 'like', '%' . $this->search . '%')
+            ->orWhere('contact', 'like', '%' . $this->search . '%')
+            ->paginate(10);
+        return view('livewire.suppliers.supplier-index', compact('suppliers'));
     }
 
     public function delete($id){

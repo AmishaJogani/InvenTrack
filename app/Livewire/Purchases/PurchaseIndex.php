@@ -6,12 +6,21 @@ use App\Models\Purchase;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
+
 #[Layout('layouts.admin-layout')]
 class PurchaseIndex extends Component
 {
     use WithPagination;
+    public $search = ''; // Search query    
+    protected $queryString = ['search']; // Keeps search term in the URL
     public function render()
     {
-        return view('livewire.purchases.purchase-index',['purchases'=>Purchase::paginate(10)]);
+        $purchases = Purchase::whereHas('supplier', function ($query) {
+            $query->where('name', 'like', '%' . $this->search . '%')
+            ->orWhere('purchase_date', 'like', '%' . $this->search . '%');
+        })
+            ->paginate(10);
+
+        return view('livewire.purchases.purchase-index', compact('purchases'));
     }
 }

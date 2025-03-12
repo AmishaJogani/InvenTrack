@@ -8,8 +8,13 @@ use Livewire\Component;
 #[Layout('layouts.admin-layout')]
 class SaleItems extends Component
 {
+    public $search = ''; // Search query
+    protected $queryString = ['search']; // Keeps search term in the URL
     public function render()
     {
-        return view('livewire.sales.sale-items',['saleitems'=>SaleItem::paginate(10)]);
+        $saleitems = SaleItem::whereHas('product' , function($query){
+            $query->where('name', 'like', '%' . $this->search . '%');
+        })->paginate(10);
+        return view('livewire.sales.sale-items', compact('saleitems'));
     }
 }

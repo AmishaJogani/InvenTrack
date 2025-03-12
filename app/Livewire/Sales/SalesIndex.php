@@ -10,8 +10,13 @@ use Livewire\WithPagination;
 class SalesIndex extends Component
 {
     use WithPagination;
+    public $search = ''; // Search query
+    protected $queryString = ['search']; // Keeps search term in the URL
     public function render()
     {
-        return view('livewire.sales.sales-index',['sales'=>Sale::paginate(10)]);
+        $sales = Sale::whereHas('customer', function($query){
+            $query->where('name', 'like', '%' . $this->search . '%');
+        })->paginate(10);
+        return view('livewire.sales.sales-index', compact('sales'));
     }
 }

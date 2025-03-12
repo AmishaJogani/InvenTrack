@@ -10,9 +10,14 @@ use Livewire\WithPagination;
 class BrandsIndex extends Component
 {
 use WithPagination;
+public $search = ''; // Search query
+
+protected $queryString = ['search']; // Keeps search term in the URL
     public function render()
     {
-        return view('livewire.brands.brands-index',['brands' => Brand::paginate(10)]);
+        $brands = Brand::where('name', 'like', '%' . $this->search . '%')
+            ->paginate(10);
+        return view('livewire.brands.brands-index', compact('brands'));
     }
 
     public function delete($id){

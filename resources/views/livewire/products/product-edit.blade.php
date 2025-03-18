@@ -108,6 +108,48 @@
                     <small class="text-danger">{{ $message }}</small> @enderror
                 </div>
 
+                <div class="mb-3">
+                    <label for="images" class="form-label"
+                        >Product Images</label
+                    >
+                    <input
+                        type="file"
+                        id="images"
+                        wire:model="images"
+                        class="form-control"
+                        multiple
+                    />
+                    @error('images.*')
+                    <small class="text-danger">{{ $message }}</small> @enderror
+                </div>
+                @if ($images || $existingImages)
+                <div class="mt-2 d-flex gap-2 flex-wrap">
+                    <!-- Show Existing Images with Delete Button -->
+                    @foreach ($existingImages as $image)
+                        <div class="position-relative">
+                            <img src="{{ asset('storage/' . $image) }}" class="img-thumbnail" width="100">
+                            <button class="btn btn-danger btn-sm position-absolute top-0 end-0"
+                                    wire:click.prevent="deleteExistingImage('{{ $image }}')"
+                                    >
+                                ❌
+                            </button>
+                        </div>
+                    @endforeach
+            
+                    <!-- Show New Selected Images with Delete Button -->
+                    @foreach ($images as $index => $image)
+                        <div class="position-relative">
+                            <img src="{{ $image->temporaryUrl() }}" class="img-thumbnail" width="100">
+                            <button class="btn btn-danger btn-sm position-absolute top-0 end-0"
+                                    wire:click.prevent="deleteNewImage({{ $index }})">
+                                ❌
+                            </button>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+            
+
                 <div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-success">
                         Update Product

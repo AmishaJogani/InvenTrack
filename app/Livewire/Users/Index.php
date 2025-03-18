@@ -11,11 +11,16 @@ use Livewire\WithPagination;
 class Index extends Component
 {
     use WithPagination;
-    public $userId, $name, $role, $email, $profileImgPath;
+    public $search = ''; // Search query
+    protected $queryString = ['search']; // Keeps search term in the URL
 
     public function render()
     {
-        return view('livewire.users.index' , ['users' => User::paginate(10)]);
+        $users = User::where('name', 'like', '%' . $this->search . '%')
+            ->orWhere('email', 'like', '%' . $this->search . '%')
+            ->orWhere('role', 'like', '%' . $this->search . '%')
+            ->paginate(10);
+        return view('livewire.users.index' , compact('users'));
     }
 
     public function delete($id)

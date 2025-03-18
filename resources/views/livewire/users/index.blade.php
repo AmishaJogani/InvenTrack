@@ -6,8 +6,8 @@
 
 <div>
 
-    <div class="d-flex justify-content-end align-items-center mt-3 mb-3">
-        
+    <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+        <input class="form-control w-25" placeholder="Search User..." wire:model.live="search">
         <a href="{{ route('register') }}" class="btn btn-outline-success">
             + Add User
         </a>

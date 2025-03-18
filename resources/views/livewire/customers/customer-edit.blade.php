@@ -1,6 +1,6 @@
 <x-slot name="header">
     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        {{ __('Suppliers') }}
+        {{ __('Customers') }}
     </h2>
 </x-slot>
 
@@ -8,7 +8,7 @@
 
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Update Supplier</h5>
+            <h5 class="mb-0">Update Customer</h5>
         </div>
         
         <div class="card-body">
@@ -19,10 +19,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
-
             <form wire:submit="update">
                 <div class="mb-3">
-                    <label for="name" class="form-label">supplier's Name</label>
+                    <label for="name" class="form-label">Name</label>
                     <input id="name" wire:model="name" class="form-control">
                     @error('name') <small class="text-danger">{{ $message }}</small> @enderror
                 </div>
@@ -46,7 +45,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-success">Update Supplier</button>
+                    <button type="submit" class="btn btn-success">Update Customer</button>
                 </div>
             </form>
 

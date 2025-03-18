@@ -21,4 +21,11 @@ class CustomerIndex extends Component
             ->paginate(10);
         return view('livewire.customers.customer-index',compact('customers'));
     }
+
+    public function delete($id)
+    {
+        $customer = Customer::find($id);
+        $customer->delete();
+        session()->flash('success', 'Customer Deleted Successfully');
+    }
 }

@@ -19,6 +19,7 @@
                     <th scope="col">Contact</th>
                     <th scope="col">Email</th>
                     <th scope="col">Address</th>
+                    <th scope="col" style="width: 150px;">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,6 +31,13 @@
                         <td>{{ $customer->contact }}</td>
                         <td>{{ $customer->email }}</td>
                         <td>{{ $customer->address }}</td>
+                        <td>
+                            <a href="{{ route('customer.edit', $customer->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            @if(in_array(auth()->user()->role, ['admin', 'manager']))
+
+                            <button class="btn btn-sm btn-danger" wire:click="delete({{ $customer->id }})" wire:confirm="Are you sure you want to delete this customer?">Delete</button>
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
                 @else

@@ -8,10 +8,11 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <input class="form-control w-25" placeholder="Search categories..." wire:model.live="search">
-
+        @if(in_array(auth()->user()->role, ['admin', 'manager']))
         <a href="{{ route('category.create') }}" class="btn btn-outline-success">
             + Add Category
         </a>
+        @endif
     </div>
    
     <div class="table-responsive">
@@ -21,7 +22,9 @@
                     <th scope="col" style="width: 50px;">#</th>
                     <th scope="col">Category</th>
                     <th scope="col">Parent category</th>
+                    @if(in_array(auth()->user()->role, ['admin', 'manager']))
                     <th scope="col" style="width: 150px;">Actions</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -31,11 +34,13 @@
                         <td>{{ $categories->firstItem()+$Index }}</td>
                         <td>{{ $category->name }}</td>
                         <td>{{ $category->parent?->name ?? 'N/A' }}</td>
+                        @if(in_array(auth()->user()->role, ['admin', 'manager']))
                         <td>
                             <a href="{{ route('category.edit', $category->id) }}" class="btn btn-sm btn-warning">Edit</a>
 
                             <button class="btn btn-sm btn-danger" wire:click="delete({{ $category->id }})" wire:confirm="Are you sure you want to delete this category?">Delete</button>
                         </td>
+                        @endif
                     </tr>
                 @endforeach
                 @else

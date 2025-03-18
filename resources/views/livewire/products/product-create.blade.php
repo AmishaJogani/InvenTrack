@@ -26,7 +26,7 @@
             </div>
             @endif
 
-            <form wire:submit="save">
+            <form wire:submit="save" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="name" class="form-label">product Name</label>
                     <input id="name" wire:model="name" class="form-control" />
@@ -107,6 +107,33 @@
                     @error('low_stock_alert')
                     <small class="text-danger">{{ $message }}</small> @enderror
                 </div>
+
+                <div class="mb-3">
+                    <label for="images" class="form-label"
+                        >Product Images</label
+                    >
+                    <input
+                        type="file"
+                        id="images"
+                        wire:model="images"
+                        class="form-control"
+                        multiple
+                    />
+                    @error('images.*')
+                    <small class="text-danger">{{ $message }}</small> @enderror
+                </div>
+                <!-- Image Preview Section -->
+                @if ($images)
+                <div class="mt-2 d-flex gap-2">
+                    @foreach ($images as $image)
+                    <img
+                        src="{{ $image->temporaryUrl() }}"
+                        class="img-thumbnail"
+                        width="100"
+                    />
+                    @endforeach
+                </div>
+                @endif
 
                 <div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-success">
